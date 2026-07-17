@@ -3,6 +3,17 @@
 This repository provides labeled data for training homograph disambiguation
 models, as described in:
 
+Tihelka, D., Tihelková, A., Řezáčková, M., and Matoušek, J. (2026). [Text-to-Text Transfer
+Transformer as a High-Precision Homograph Disambiguator] (under review)
+
+The data are fork of the original repository https://github.com/google-research-datasets/WikipediaHomographData
+(commit 8f008f021e88f8b71118a27ae655f1f3121162bc), and contain the
+fixes described in the above mentioned paper. Also, they contain the additional
+homograph words in cases where there are multiple such words in a sentence.
+
+
+The original repository was described in paper:
+
 Gorman, K., Mazovetskiy, G., and Nikolaev, V. (2018). [Improving homograph
 disambiguation with machine
 learning](https://www.aclweb.org/anthology/L18-1215/). In 
