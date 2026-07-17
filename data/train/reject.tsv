@@ -32,7 +32,7 @@
 "reject"	"reject_vrb"	"In particular, the context-driven community and the International Society for Software Testing reject these standards."	95	101
 "reject"	"reject_vrb"	"The Armenian Church would reject the decisions of the Council of Chalcedon, instead adhering to Miaphysitism."	26	32
 "reject"	"reject_vrb"	"Pluralists likewise reject historicism and utopian thinking."	20	26
-"reject"	"reject_nou"	"If they cannot support the reservation being requested, they send a reject message to let the listener know about it."	68	74
+"reject"	"reject_vrb"	"If they cannot support the reservation being requested, they send a reject message to let the listener know about it."	68	74
 "reject"	"reject_vrb"	"The procedure may assume that reject(P,t) returned false for every ancestor t of c in the search tree."	30	36
 "reject"	"reject_vrb"	"They may even deliberately reject certain behaviors that are seen as ""acting white."""	27	33
 "reject"	"reject_vrb"	"In the first case, an algorithm for Unambiguous-SAT should reject, and in the second it should accept the formula."	59	65
