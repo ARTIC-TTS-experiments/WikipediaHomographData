@@ -34,18 +34,26 @@ There are now 162 unique homographs and roughly 100 examples per homograph.
 
 ## Organization
 
-The files in the directories `data/train` and `data/eval` are TSV files with
+The files `data/train.tsv` and `data/eval.tsv` are TSV files with
 the following fields:
 
-* `homograph`: the homograph word itself
-* `wordid`: name of the pronunciation
-* `sentence`: text of the example
-* `start`: the first byte---inclusive--of the target homograph in
-   `sentence`
-* `end`: the last byte---exclusive---of the target homograph in `sentence`
+* `sentence`: text of the example with the homograph word surrounded by <> for
+    the original homograph word, and by <<>> for the other homograph words, if
+    there are such in the sentence
+* `wordid`: name of the pronunciation (homograph variant), related to the homograph
+    word surrounded by <>
+* `wordid2`: name of the pronunciation (homograph variant) of the second homograph,
+    the first in the sentence surrounded by <<>>
+* more `wordidX` may follow, if there are multiple homograph words in
+   the sentence. They are ordered by their position, though.
 
 These two files represent a suggested 90%/10% train/test split stratified by
 homograph.
+
+In this repository, the "new" format is used, which is more suitable for the annotation
+of multiple homograph words. If the original format of the dataset is preferred (with
+the fixes included), it can be obtained from `orig_format` branch.
+
 
 The file `data/wordids.tsv` is a TSV file which maps from the `WORDID` field
 above to information used by the annotator: -a short human-readable description
@@ -66,10 +74,16 @@ intended for use during error analysis. The following fields are present:
 
 ## Authors
 
-This data was collected by [Kyle Gorman](mailto:kbg@google.com),
+The original data was collected by [Kyle Gorman](mailto:kbg@google.com),
 [Vitaly Nikolaev](mailto:vitalyn@google.com), and
 [Gleb Mazovetskiy](mailto:glebm@google.com), with help from a team of linguists
 and annotators.
+
+The fixes and multiple homograph annotations were added by
+[Daniel Tihelka](mailto:dtihelka@fav.zcu.cz),
+[Alice Tihelková](mailto:atiheko@ff.zcu.cz),
+[Markéta Řezáčková](mailto:juzova@fav.zcu.cz), and
+[Jindřich Matoušek](mailto:jmatouse@fav.zcu.cz),
 
 ## License
 
