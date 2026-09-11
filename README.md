@@ -52,7 +52,8 @@ homograph.
 
 In this repository, the "new" format is used, which is more suitable for the annotation
 of multiple homograph words. If the original format of the dataset is preferred (with
-the fixes included), it can be obtained from `orig_format` branch.
+the fixes included), it can be obtained from `orig_format` branch, or the `split.py`
+script can be used.
 
 
 The file `data/wordids.tsv` is a TSV file which maps from the `WORDID` field
