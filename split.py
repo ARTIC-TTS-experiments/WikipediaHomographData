@@ -103,11 +103,13 @@ def conv_homographs(input:str, out_dir:str, all_homographs:bool) :
         # Auxiliary storage for post processing
         X = []
         # Get the homograph world(s)
-        for x,h in zip(data, homogr.finditer(S)) :
+        for h in homogr.finditer(S) :
             W   = h.group(2)
             w   = W.lower()
             # Get the position in the sentence (with <> marked homographs)
             b,e = h.span(2)
+            # Get the type - the original word first (<>), remaining start at index 1 (<<>>)
+            x   = data[0] if b'<<' not in h.group(1) else data.pop(1)
 
             # Create data item
             D   = words.setdefault(w, [Item.header(), ])
