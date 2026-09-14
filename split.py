@@ -47,19 +47,55 @@ def conv_homographs(input:str, out_dir:str, all_homographs:bool) :
                                brackets (<...>).
     '''
 
+    class Item :
+          '''
+          Auxiliary class holding the data of a homograph word.
+          '''
+
+          def __init__(self, h:str,w:str,s:str,b:int,e:int) :
+              self.__h = h
+              self.__w = w
+              self.__s = s
+              self.__b = b
+              self.__e = e
+
+          def sent(self, s:str) :
+              self.__s = s
+
+          def shift(self, v:int) :
+              self.__b += v
+              self.__e += v
+
+          @property
+          def start(self) :
+              return self.__b
+          @property
+          def end(self) :
+              return self.__e
+          @property
+          def data(self) :
+              return (self.__h,
+                      self.__w,
+                      self.__s,
+                      self.__b,
+                      self.__e,
+                     )
+          @staticmethod
+          def header() :
+              return Item(b'homograph',
+                          b'wordid',
+                          b'sentence',
+                          b'start',
+                          b'end',
+                         )
+
+
     # Homograph word parser
-    hwords1 = re.compile(b'<([^>]+)>')
-    hwordsM = re.compile(b'[<]+([^>]+)[>]+')
-    # Header and data bufferout_dir
-    header = (b'homograph',
-              b'wordid',
-              b'sentence',
-              b'start',
-              b'end',
-             )
-    words  = {}
+    hwords1 = re.compile(b'(^|[^<])<([^<>]+)>([^>]|$)')
+    hwordsM = re.compile(b'([<]+)([^<>]+)([>]+)')
+    words   = {}
     # Which word to handle? Orig or all?
-    homogr = hwordsM if all_homographs else hwords1
+    homogr  = hwordsM if all_homographs else hwords1
 
     # Read the file and process the items
     for S,*data in read_homographs(input) :
@@ -68,41 +104,43 @@ def conv_homographs(input:str, out_dir:str, all_homographs:bool) :
         X = []
         # Get the homograph world(s)
         for x,h in zip(data, homogr.finditer(S)) :
-            W   = h.group(1)
+            W   = h.group(2)
             w   = W.lower()
             # Get the position in the sentence (with <> marked homographs)
-            b,e = h.span(1)
+            b,e = h.span(2)
 
             # Create data item
-            D   = words.setdefault(w, [header, ])
+            D   = words.setdefault(w, [Item.header(), ])
             # Add the current word
-            d   = [w, # "homograph"
-                   x, # "wordid"
-                   S, # "sentence"
-                   b, # "start"
-                   e, # "end"
-                  ]
-            D.append(d)
-
+            D.append(Item(w,x,S,b,e))
             # Store it for further processing
             X.append(D[-1])
 
-
         # And post process the data by removing < in the sentences
-        for x,h in enumerate(hwordsM.finditer(S)) :
-            W   =  h.group(1)
-            B,E =  h.span(1)
+        while h := hwordsM.search(S) :
+
+            W   =  h.group(2)
+            B,E =  h.span(0)
+            W,Y =  h.span(2)
 
             # Update sentence
             s   =  S
-            S   =  S[:B-1] + S[B:E] + S[E+1:]
+            S   =  S[:B] + S[W:Y] + S[E:]
 
             # Propagate the changes to all stored sentences
-            for i,(w,x,s,b,e) in enumerate(X) :
-                # Update the item
-                X[i][2] = S
-                X[i][3] = min(b,B-1)
-                X[i][4] = min(e,E-1)
+            for x in X :
+                # Change the sentence
+                x.sent(S)
+                # Whole before the match - ignore
+                if   x.end < W :
+                     continue
+                # Whole after the match - shift for bots < and >
+                elif x.start > Y :
+                     x.shift(-W+B - E+Y)
+                # Shift just only for <
+                else  :
+                     x.shift(-W+B)
+
 
     # Store words to the files
     for h,sents in words.items() :
@@ -112,7 +150,7 @@ def conv_homographs(input:str, out_dir:str, all_homographs:bool) :
         with open(os.path.join(out_dir, f'{h}.tsv'), 'wb') as f :
              for s in sents :
                  #
-                 s   = [(b'"' + x.replace(b'"', b'""') + b'"') if isinstance(x,bytes) else str(x).encode('utf8') for x in s]
+                 s   = [(b'"' + x.replace(b'"', b'""') + b'"') if isinstance(x,bytes) else str(x).encode('utf8') for x in s.data]
                  # Store
                  f.write(b'\t'.join(s))
                  f.write(b'\n')
